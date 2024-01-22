@@ -87,10 +87,8 @@ def plot_commit_history(commit_data):
 
 
     for data in commit_dates_data:
-        print (data)
         # sort the dict by key month
         data["dates_months"] = {k: v for k, v in sorted(data["dates_months"].items(), key=lambda item: item[0])}
-        print (data)
 
         repo_name = data["repo"]
         commit_counts = data["dates_months"]
@@ -118,6 +116,8 @@ def plot_commit_history(commit_data):
     # ax2.legend()
     ax2.grid(True)
 
+    plt.savefig('commit_history.png')
+
     plt.show()
 
 
@@ -126,6 +126,11 @@ def save_total_commits_to_file(commit_data, filename="total_commits.json"):
     
     with open(filename, 'w') as file:
         json.dump(total_commits_data, file, indent=2)
+
+# save commit data to file
+def save_commit_data_to_file(commit_data, filename="commit_data.json"):
+    with open(filename, 'w') as file:
+        json.dump(commit_data, file, indent=2)
 
 # ---------------------------- main ----------------------------
 
@@ -141,6 +146,7 @@ for repo in repos:
 
 # Fetch commit history for each repository
 commit_dates_data = []
+counter = 1
 for repo in repos:
     repo_name = repo["name"]
     commits_url = f"https://api.github.com/repos/{organization}/{repo_name}/commits"
@@ -152,12 +158,14 @@ for repo in repos:
         "dates_months": commit_counts,
         "total_commits": sum(commit_counts.values())
     })
-    print("...............................................")
-    print(commit_dates_data)
+    print(f"... {counter} ............................................")
+    print(commit_dates_data[-1])
+    counter += 1
 
 
 # After your loop that collects commit_data
 save_total_commits_to_file(commit_dates_data, "total_commits.json")
+save_commit_data_to_file(commit_dates_data, "commit_data.json")
 
 plot_commit_history(commit_dates_data)
 
