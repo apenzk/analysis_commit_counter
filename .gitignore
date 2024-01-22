@@ -1,3 +1,5 @@
 config.py
 __pycache__
 total_commits.json
+commit_data.json
+commit_history.png
