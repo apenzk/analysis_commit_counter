@@ -10,7 +10,7 @@ from config import access_token
 
 # Replace with your GitHub organization and access token
 organization = "Fantom-foundation"
-number_of_repos = 30
+number_of_repos = 200
 
 
 def fetch_repo_commits_pagination(repo_url):
@@ -170,6 +170,7 @@ def get_commit_dates():
     print("... repos\n............................................")
     for repo in repos:
         print(repo["name"])
+    print(f"Total number of repositories: {len(repos)}")
 
     # Fetch commit history for each repository
     commit_dates_data = []
@@ -199,8 +200,8 @@ def get_commit_dates_from_file(filename="commit_data.json"):
 # ---------------------------- main ----------------------------
 
 
-# commit_dates_data = get_commit_dates()
-commit_dates_data = get_commit_dates_from_file()
+commit_dates_data = get_commit_dates()
+# commit_dates_data = get_commit_dates_from_file()
 
 # After your loop that collects commit_data
 save_total_commits_to_file(commit_dates_data, "total_commits.json")
