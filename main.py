@@ -10,7 +10,7 @@ from config import access_token
 
 # Replace with your GitHub organization and access token
 organization = "Fantom-foundation"
-number_of_repos = 2
+number_of_repos = 1
 
 
 def fetch_repo_commits_pagination(repo_url):
@@ -47,32 +47,35 @@ def plot_commit_history(commit_data):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 
     # oldest and latest date of the entire date range
-    # dates = list(commit_dates_data[0]["dates_months"].keys())
-    # dates.sort()
-    # oldest_date = dates[0]
-    # latest_date = dates[-1]
+    dates = list(commit_dates_data[0]["dates_months"].keys())
+    dates.sort()
+    oldest_date_str = dates[0]
+    latest_date_str = dates[-1]
+    # interpret the date as a year-month string
+    oldest_date = datetime.strptime(oldest_date_str, "%Y-%m")
+    latest_date = datetime.strptime(latest_date_str, "%Y-%m")
+    print(oldest_date)
 
-    # # oldest and latest date of the entire date range
-    # dates = list(commit_dates_data[0]["dates_months"].keys())
-    # dates.sort()
-    # oldest_date = dates[0]
-    # latest_date = dates[-1]
-    # # create a valid month list between the first and last month
-    # # dont use strftime, but keep the datetime object
-    # valid_months = []
-    # january_months = []
-    # for date in range(oldest_date.month, latest_date.month+1):
-        
+    # create a list of all months in the date range
+    valid_months = []
+    current_date = oldest_date
+    while current_date <= latest_date:
+        # write the current date to the list
+        valid_months.append(current_date.strftime("%Y-%m"))
+        if current_date.month == 12:
+            # if the current month is december, set the month to january of the next year
+            current_date = current_date.replace(year=current_date.year+1, month=1)
+        else:
+            # else just increment the month
+            current_date = current_date.replace(month=current_date.month+1)
 
-    # collector for the month keys
-    valid_months = []    
-    for data in commit_data:
-        for key, value in data["dates_months"].items():
-            if key not in valid_months:
-                valid_months.append(key)
-    valid_months.sort()
-    print(valid_months)
-
+    print (valid_months)        
+    # create a list of only january months
+    january_months = []
+    for i in range(len(valid_months)):
+        if valid_months[i].endswith("-01"):
+            january_months.append(valid_months[i])
+    
     # for the first repo we add the months with value 0 to the dict
     for key in valid_months:
         if key not in commit_data[0]["dates_months"]:
@@ -101,17 +104,26 @@ def plot_commit_history(commit_data):
         cumulative_counts = [sum(list(commit_counts.values())[:i+1]) for i in range(len(commit_counts))]
         ax2.plot(list(commit_counts.keys()), cumulative_counts, label=f"{repo_name}", marker='')
 
+    # from the keys create an array that only keeps the first month of a year
+    january_months = []
+    for i in range(len(valid_months)):
+        if valid_months[i].endswith("-01"):
+            january_months.append(valid_months[i])
 
+    
+        
 
     # Set labels and legend
     ax1.set_title(f'Commit History for {organization} Repositories')
     ax1.set_xlabel('Month')
     ax1.set_ylabel('Number of Commits')
+    ax1.set_xticks(january_months)
     # ax1.legend()
     ax1.grid(True)
 
     ax2.set_title(f'Cumulative Commit History for {organization} Repositories')
     ax2.set_xlabel('Month')
+    ax2.set_xticks(january_months)
     ax2.set_ylabel('Cumulative Number of Commits')
     # ax2.legend()
     ax2.grid(True)
