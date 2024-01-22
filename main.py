@@ -9,8 +9,9 @@ from config import access_token
 
 
 # Replace with your GitHub organization and access token
+# organization = "iotaledger"
 organization = "Fantom-foundation"
-number_of_repos = 200
+number_of_repos = 500
 
 
 def fetch_repo_commits_pagination(repo_url):
@@ -21,7 +22,15 @@ def fetch_repo_commits_pagination(repo_url):
         commits = commits_response.json()
 
         # Extract commit dates
-        dates = [commit["commit"]["author"]["date"] for commit in commits]
+        dates = []
+        try:
+            for commit in commits:
+                dates.append(commit["commit"]["author"]["date"])
+        except:
+            print("Error")
+            print(commits)
+            # skip this repo and go to the next one
+            break
 
         # Convert ISO date strings to datetime objects
         dates = [datetime.strptime(date.split("T")[0], "%Y-%m-%d") for date in dates]
@@ -55,6 +64,8 @@ def plot_commit_history(commit_data):
     for data in commit_data:
         dates = list(data["dates_months"].keys())
         dates.sort()
+        if len(dates) == 0:
+            continue
         oldest_date_str_current = dates[0]
         latest_date_str_current = dates[-1]
         # interpret the date as a year-month string
@@ -162,15 +173,29 @@ def save_commit_data_to_file(commit_data, filename="commit_data.json"):
 
 def get_commit_dates():
     # Fetch all repositories in the organization
-    repos_url = f"https://api.github.com/orgs/{organization}/repos?per_page={number_of_repos}"
-    response = requests.get(repos_url, headers={"Authorization": f"Bearer {access_token}"})
-    repos = response.json()
+    bool_next_page = True
+    page = 1
+    repos = []
+    while bool_next_page:
+        repos_url = f"https://api.github.com/orgs/{organization}/repos?per_page={number_of_repos}&page={page}"
+        response = requests.get(repos_url, headers={"Authorization": f"Bearer {access_token}"})
+        repos_current = response.json()
+        if len(repos_current) == 0:
+            bool_next_page = False
+        else:
+            repos.extend(repos_current)
+            page += 1
 
     # Print the response to inspect
     print("... repos\n............................................")
     for repo in repos:
         print(repo["name"])
     print(f"Total number of repositories: {len(repos)}")
+
+    # keep only number_of_repos repos
+    if len(repos) > number_of_repos:
+        repos = repos[:number_of_repos]
+        print(f"Reduced total number of repositories: {len(repos)}")
 
     # Fetch commit history for each repository
     commit_dates_data = []
