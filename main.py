@@ -6,11 +6,11 @@ from collections import defaultdict
 from matplotlib.dates import YearLocator, DateFormatter
 
 from config import access_token
+from config import organization
 
 
 # Replace with your GitHub organization and access token
 # organization = "iotaledger"
-organization = "Fantom-foundation"
 number_of_repos = 500
 
 
