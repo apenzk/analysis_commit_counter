@@ -80,15 +80,7 @@ def plot_commit_history(commit_data):
     print (oldest_date)
     print("latest_date")
     print (latest_date)
-            
-    # dates = list(commit_dates_data[0]["dates_months"].keys())
-    # dates.sort()
-    # oldest_date_str = dates[0]
-    # latest_date_str = dates[-1]
-    # # interpret the date as a year-month string
-    # oldest_date = datetime.strptime(oldest_date_str, "%Y-%m")
-    # latest_date = datetime.strptime(latest_date_str, "%Y-%m")
-    # print(oldest_date)
+
 
     # create a list of all months in the date range
     valid_months = []
