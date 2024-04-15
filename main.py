@@ -8,9 +8,7 @@ from matplotlib.dates import YearLocator, DateFormatter
 from config import access_token
 from config import organization
 
-
-# Replace with your GitHub organization and access token
-# organization = "iotaledger"
+# Max number of repositories to fetch. Might have to limit this to make it work.
 number_of_repos = 500
 
 
