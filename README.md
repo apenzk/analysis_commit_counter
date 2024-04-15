@@ -1,5 +1,7 @@
 # analysis_commit_counter
 
+Extract the number and distribution of commits accross all public repos of an organisation. The distribution is then processed and displayed in a png graph.
+
 ## Setup
 
 create `config.py` file with the following content:
