@@ -17,8 +17,11 @@ The github token should have the permission `public_repo access`
 ## Dependencies
 
 ```
+python3 -m venv venv    
+source venv/bin/activate
 pip3 install requests
 pip3 install matplotlib
+deactivate     # to exit the virtual environment
 ```
 
 
